@@ -1,0 +1,9 @@
+Aug 24, 2023 12:57:46 AM HRS.LoggerManager logInfo
+INFO: User 'Alice' logged in.
+Aug 24, 2023 12:57:47 AM HRS.LoggerManager logWarning
+WARNING: Failed login attempt for user 'Bob' from IP address 192.168.1.100.
+Aug 24, 2023 12:57:47 AM HRS.LoggerManager logError
+SEVERE: An error occurred during a calculation.
+java.lang.ArithmeticException: / by zero
+	at HRS.LoggerManager.main(LoggerManager.java:57)
+

@@ -1,0 +1,213 @@
+1. Introduction
+
+Overview of the Software:
+The Employee Management and Payroll System is a comprehensive software solution designed to streamline HR processes, manage employee data, calculate payroll, and ensure compliance with Sierra Leonean labor and tax regulations.
+
+Purpose and Scope of Documentation:
+This documentation serves as a guide for users, administrators, and developers, providing insights into the software's functionalities, technical aspects, and compliance measures.
+
+2. User Manuals
+
+User Manual
+
+Introduction to the Software:
+The Employee Management and Payroll System simplifies HR tasks, enabling efficient employee data management, leave tracking, and payroll calculations.
+
+System Requirements:
+- Operating System: Windows 10 or higher
+- Java Runtime Environment (JRE) 8 or later
+- Minimum 4GB RAM
+- 20GB of available disk space
+
+Installation Instructions:
+1. Download the software package.
+2. Install the Java Runtime Environment.
+3. Launch the application.
+4. Configure database settings.
+
+User Interface Overview:
+The intuitive interface includes dashboards for easy navigation, allowing users to access employee profiles, payroll reports, and more.
+
+User Registration and Login:
+Users can create accounts, log in, and access their respective roles and permissions.
+
+User Profile Management:
+Employees and administrators can update personal information, change passwords, and manage email preferences.
+
+Employee Management:
+Admins can add, edit, and remove employee profiles, including personal details, employment history, and contact information.
+
+Leave Management:
+Users can apply for leave, and administrators can approve or reject requests. The system tracks leave balances.
+
+Payroll Management:
+Calculate payroll with deductions, allowances, and generate pay stubs.
+
+Reporting and Analytics:
+Access various reports, including payroll summaries, attendance records, and tax reports.
+
+Troubleshooting and FAQs:
+Find solutions to common issues and answers to frequently asked questions.
+
+Contact Information for Support:
+For technical assistance, contact our support team at support@example.com.
+
+3. Technical Documentation
+
+Architecture Overview
+
+System Architecture:
+The software follows a three-tier architecture with a presentation layer, business logic layer, and data access layer.
+
+Database Schema:
+A relational database using SQLite with tables for employee data, attendance, and payroll.
+
+Data Flow Diagrams:
+Illustrations of data flows between components and users.
+
+Development Environment
+
+Programming Languages Used:
+- Java
+- SQL
+
+Libraries and Frameworks:
+- JavaFX for the user interface
+- JDBC for database connectivity
+
+Database:
+SQLite is used for local data storage.
+
+Development Tools:
+- IntelliJ IDEA
+
+Code Documentation
+
+Code Structure and Organization:
+The codebase is organized into packages for user interface, data access, and business logic.
+
+Key Classes and Methods:
+- `EmployeeManager` for employee-related operations.
+- `PayrollCalculator` for payroll calculations.
+
+Code Comments and Javadoc:
+Code includes comments for clarification. Comprehensive Javadoc is available for public methods.
+
+Database Documentation
+
+Table Definitions:
+- `Employee`: Stores employee information.
+- `AttendanceRecord`: Records employee attendance.
+- `PayrollRecord`: Contains payroll data.
+
+Relationships and Constraints:
+Tables are related using primary and foreign keys, ensuring data integrity.
+
+Sample Queries:
+Sample SQL queries are available for data retrieval.
+
+Security Documentation
+
+Security Measures Implemented:
+- User authentication and authorization
+- Data encryption for sensitive information
+
+User Authentication and Authorization:
+Access is controlled through role-based permissions.
+
+Backup and Recovery
+
+Backup Strategies:
+Regular backups of the database and system data are recommended.
+
+Disaster Recovery Plan:
+A plan for data recovery in case of system failures.
+
+4. Compliance Documentation
+
+Tax Regulations Compliance
+
+PAYE Tax Calculation:
+PAYE tax is calculated based on Sierra Leonean tax brackets and rates.
+
+NASSIT Contributions:
+Employee and employer NASSIT contributions are automatically deducted and added, respectively.
+
+Labor Laws Compliance
+
+Employee Leave Policies:
+The system enforces leave policies as per Sierra Leonean labor laws.
+
+Working Hours and Overtime:
+Working hours and overtime are tracked and calculated in compliance with labor regulations.
+
+Data Protection Laws Compliance
+
+Data Privacy Measures:
+The software ensures the privacy of user data and follows data protection regulations.
+
+User Data Handling:
+User data is stored securely and is accessible only to authorized personnel.
+
+5. Testing Documentation
+
+Test Plans
+
+Unit Testing:
+Unit tests validate individual code components.
+
+Integration Testing:
+Integration tests verify the interaction between different system modules.
+
+User Acceptance Testing (UAT):
+UAT involves users to validate system functionality.
+
+Test Cases
+
+Detailed Test Scenarios:
+Test scenarios cover a wide range of use cases.
+
+Expected Outcomes:
+Specify the expected results for each test.
+
+Test Results:
+Document the results of each test.
+
+6. Deployment and Maintenance
+
+Deployment Instructions
+
+Deployment Environment Setup:
+Instructions for setting up the software in a production environment.
+
+Configuration Management:
+Guidelines for configuring system settings and database connections.
+
+Maintenance Guidelines
+
+Bug Reporting and Tracking:
+Procedures for reporting and tracking software issues.
+
+Version Control and Release Notes:
+Details on version control practices and release notes for updates.
+
+Patching and Updates:
+Guidance on applying patches and software updates.
+
+7. Appendices
+
+Glossary
+
+Definitions of Technical Terms:
+A glossary of technical terms used throughout the documentation.
+
+References
+
+External Resources Used:
+References to external documentation and resources.
+
+8. Revision History
+
+Record of Document Revisions:
+A log of changes made to the documentation.
+
