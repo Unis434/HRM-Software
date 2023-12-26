@@ -32,16 +32,16 @@ public class TaxReportGenerator {
     private double calculatePAYE(double income) {
         double payeTax = 0;
 
-        if (income <= 500) {
+        if (income <= 600) {
             payeTax = 0; // Nil tax
-        } else if (income <= 1000) {
-            payeTax = 0.15 * (income - 500); // 15% tax for the next Le 500
-        } else if (income <= 1500) {
-            payeTax = 0.15 * 500 + 0.20 * (income - 1000); // 15% tax for the first Le 500, 20% tax for the next Le 500
-        } else if (income <= 2000) {
-            payeTax = 0.15 * 500 + 0.20 * 500 + 0.30 * (income - 1500); // 15% tax for the first Le 500, 20% tax for the next Le 500, 30% tax for the next Le 500
+        } else if (income <= 1200) {
+            payeTax = 0.15 * (income - 600); // 15% tax for the next Le 600
+        } else if (income <= 1800) {
+            payeTax = 0.15 * 600 + 0.20 * (income - 1200); // 15% tax for the first Le 600, 20% tax for the next Le 600
+        } else if (income <= 2400) {
+            payeTax = 0.15 * 600 + 0.20 * 600 + 0.30 * (income - 1800); // 15% tax for the first Le 600, 20% tax for the next Le 600, 30% tax for the next Le 600
         } else {
-            payeTax = 0.15 * 500 + 0.20 * 500 + 0.30 * 500 + 0.35 * (income - 2000); // 15% tax for the first Le 500, 20% tax for the next Le 500, 30% tax for the next Le 500, 35% tax for the rest
+            payeTax = 0.15 * 600 + 0.20 * 600 + 0.30 * 600 + 0.35 * (income - 2400); // 15% tax for the first Le 600, 20% tax for the next Le 600, 30% tax for the next Le 600, 35% tax for the rest
         }
 
         return payeTax;
