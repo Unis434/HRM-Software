@@ -34,16 +34,16 @@ public class PayrollCalculator {
 
         double payeTax = 0;
         if (taxableIncome > 0) {
-            if (taxableIncome <= 500) {
+            if (taxableIncome <= 600) {
                 payeTax = 0;
-            } else if (taxableIncome <= 1000) {
-                payeTax = 0.15 * (taxableIncome - 500);
-            } else if (taxableIncome <= 1500) {
-                payeTax = 0.15 * 500 + 0.20 * (taxableIncome - 1000);
-            } else if (taxableIncome <= 2000) {
-                payeTax = 0.15 * 500 + 0.20 * 500 + 0.30 * (taxableIncome - 1500);
+            } else if (taxableIncome <= 1200) {
+                payeTax = 0.15 * (taxableIncome - 600);
+            } else if (taxableIncome <= 1800) {
+                payeTax = 0.15 * 500 + 0.20 * (taxableIncome - 1200);
+            } else if (taxableIncome <= 2400) {
+                payeTax = 0.15 * 500 + 0.20 * 500 + 0.30 * (taxableIncome - 1800);
             } else {
-                payeTax = 0.15 * 500 + 0.20 * 500 + 0.30 * 500 + 0.35 * (taxableIncome - 2000);
+                payeTax = 0.15 * 600 + 0.20 * 600 + 0.30 * 600 + 0.35 * (taxableIncome - 2400);
             }
         }
 
