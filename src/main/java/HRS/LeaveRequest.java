@@ -17,6 +17,7 @@ public class LeaveRequest {
         this.status = LeaveRequestStatus.PENDING; // Default status is PENDING
     }
 
+
     public LeaveRequest(Employee employee1, String paidLeave, int i) {
                 }
 
