@@ -1,67 +1,63 @@
 package HRS;
 
+/**
+ * Application entry point.
+ * Demonstrates correct wiring of all HRS components after bug fixes.
+ */
 public class Main {
-    public static void main(String[] args) {
-        // Initialize key components
-        EmployeeManager employeeManager = new EmployeeManager();
-        LeaveManager leaveManager = new LeaveManager();
-        PayrollCalculator payrollCalculator = new PayrollCalculator();
-        TaxCalculator taxCalculator = new TaxCalculator();
-        TaxReportGenerator taxReportGenerator = new TaxReportGenerator();
-        StatutoryReportGenerator statutoryReportGenerator = new StatutoryReportGenerator();
 
-        // Create and manage employees
+    public static void main(String[] args) {
+
+        // Initialise core managers
+        EmployeeManager    employeeManager    = new EmployeeManager();
+        LeaveManager       leaveManager       = new LeaveManager();
+        PayrollCalculator  payrollCalculator  = new PayrollCalculator();
+        TaxCalculator      taxCalculator      = new TaxCalculator();
+
+        // Create employees using the corrected minimal constructor
         Employee employee1 = new Employee("20053", "Unisa", "Kamara");
+        employee1.setDepartment("Finance");
+        employee1.setPosition("Finance Officer");
+        employee1.setBasicSalary(3_500_000.0);
+        employee1.setTransportAllowance(300_000.0);
+        employee1.setLunchAllowance(150_000.0);
+
         Employee employee2 = new Employee("11199", "Fatu", "Koroma");
+        employee2.setDepartment("Administration");
+        employee2.setPosition("Admin Officer");
+        employee2.setBasicSalary(2_200_000.0);
+        employee2.setTransportAllowance(200_000.0);
+
         employeeManager.addEmployee(employee1);
         employeeManager.addEmployee(employee2);
 
-        // Request leave for an employee
-        LeaveRequest leaveRequest = new LeaveRequest(employee1, LeaveType.PAID_LEAVE, 5);
-        leaveManager.equals(leaveRequest);
+        // Request leave — using the corrected LeaveRequest constructor
+        LeaveRequest leaveRequest = new LeaveRequest("REQ001", employee1.getEmployeeId(),
+                new java.util.Date(), new java.util.Date());
+        leaveManager.addLeaveRequest(leaveRequest);
 
-        // Calculate and display payroll
+        // Calculate and display payroll for each employee
+        System.out.println("=== Payroll Run ===");
+        for (Employee e : employeeManager.getAllEmployees()) {
+            Payroll payroll = payrollCalculator.calculatePayroll(e);
+            System.out.println(payroll);
+            System.out.println();
+        }
+
+        // Total payroll and tax
         double totalPayroll = payrollCalculator.calculateTotalPayroll(employeeManager.getAllEmployees());
-        System.out.println("Total Payroll: SLE" + totalPayroll);
+        double totalTax     = taxCalculator.calculateTotalTax(employeeManager.getAllEmployees());
+        System.out.printf("Total net payroll: SLE %,.2f%n", totalPayroll);
+        System.out.printf("Total PAYE:        SLE %,.2f%n", totalTax);
+        System.out.println();
 
-        // Calculate and display total tax
-        double totalTax = taxCalculator.calculateTotalTax(employeeManager.getAllEmployees());
-        System.out.println("Total Tax: SLE" + totalTax);
+        // Generate reports — employee list injected at construction time
+        TaxReportGenerator taxReportGenerator =
+                new TaxReportGenerator(employeeManager.getAllEmployees());
+        taxReportGenerator.generateTaxReport();
 
-        // Generate and display tax report
-        var taxReport = taxReportGenerator.generateTaxReport(totalTax);
-        System.out.println("Tax Report:\n" + taxReport);
-
-        // Generate and display statutory report
-        String statutoryReport = statutoryReportGenerator.generateStatutoryReport(employeeManager);
-        System.out.println("Statutory Report:\n" + statutoryReport);
-
-        // Simulate user interaction - for demonstration purposes
-        simulateUserInteraction(employeeManager, leaveManager);
-    }
-
-    // Simulate user interaction
-    private static void simulateUserInteraction(EmployeeManager employeeManager, LeaveManager leaveManager) {
-        // Assume user interaction or user interface interactions here
-        // For example, allowing users to view employee information, approve leave requests, etc.
-        // This is a simplified placeholder for user interactions.
-
-        // Example: Viewing employee information
-        Employee employee = employeeManager.getEmployeeByEmail("john@example.com");
-        if (employee != null) {
-            System.out.println("Employee Information:");
-            System.out.println("Name: " + employee.getName());
-            System.out.println("Email: " + employee.getEmail());
-            System.out.println("Department: " + employee.getDepartment());
-        }
-
-        // Example: Approving leave request
-        LeaveRequest leaveRequest = leaveManager.getPendingLeaveRequest();
-        if (leaveRequest != null) {
-            // Assume user approves the leave request
-            leaveManager.approveLeave(leaveRequest);
-            System.out.println("Leave request approved for employee: " + leaveRequest.getEmployee().getName());
-        }
+        StatutoryReportGenerator statutoryReportGenerator =
+                new StatutoryReportGenerator(employeeManager.getAllEmployees());
+        statutoryReportGenerator.generateStatutoryReport(null);
     }
 }
-
