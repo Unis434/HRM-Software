@@ -1,57 +1,96 @@
 package HRS;
 
+import java.util.Collections;
 import java.util.List;
 
+/**
+ * Generates the monthly tax report showing each employee's gross income,
+ * PAYE liability, NASSIT contribution, and net income.
+ *
+ * Tax figures are sourced exclusively from ComplianceManager.
+ * This class contains no bracket or rate definitions of its own.
+ */
 public class TaxReportGenerator {
-    private List<Employee> employees;
 
+    private final List<Employee>      employees;
+    private final ComplianceManager   complianceManager;
+
+    /**
+     * Constructs a report generator with a live employee list.
+     * The list must not be null; pass an empty list if no employees
+     * are available yet.
+     *
+     * @param employees non-null list of employees to report on
+     */
+    public TaxReportGenerator(List<Employee> employees) {
+        if (employees == null) {
+            throw new IllegalArgumentException("Employee list must not be null.");
+        }
+        this.employees         = employees;
+        this.complianceManager = new ComplianceManager();
+    }
+
+    /**
+     * No-argument constructor that initialises with an empty employee list.
+     * Intended for use in Main.java before employees are loaded;
+     * call generateTaxReport() after populating via EmployeeManager.
+     */
     public TaxReportGenerator() {
-        this.employees = employees;
+        this(Collections.emptyList());
     }
 
+    /**
+     * Generates and prints a formatted tax report for all employees.
+     * Also returns the report as a String for logging or export.
+     *
+     * @param totalTax pre-calculated total PAYE (used only for the summary footer)
+     * @return formatted report string
+     */
     public String generateTaxReport(double totalTax) {
-        // Generate a tax report header
-        System.out.println("Tax Report");
-        System.out.println("------------------------------------------------------------------");
-        System.out.printf("%-15s %-15s %-15s %-15s %-15s %-15s%n", "Employee ID", "Name", "Income", "PAYE", "NASSIT", "Net Income");
-        System.out.println("------------------------------------------------------------------");
+        StringBuilder sb = new StringBuilder();
 
-        // Calculate and display tax information for each employee
-        for (Employee employee : employees) {
-            double income = employee.getIncome();
-            double paye = calculatePAYE(income);
-            double nassit = calculateNASSIT(income);
-            double netIncome = income - paye - nassit;
+        String header = String.format(
+                "%-14s %-20s %16s %16s %16s %16s%n",
+                "Employee ID", "Name", "Income (SLE)", "PAYE (SLE)", "NASSIT (SLE)", "Net Income (SLE)"
+        );
+        String divider = "-".repeat(102);
 
-            System.out.printf("%-15s %-15s $%-14.2f $%-14.2f $%-14.2f $%-14.2f%n",
-                    employee.getEmployeeId(), employee.getName(), income, paye, nassit, netIncome);
-        }
-        return null;
-    }
+        sb.append("Tax Report\n").append(divider).append("\n").append(header).append(divider).append("\n");
 
-    private double calculatePAYE(double income) {
-        double payeTax = 0;
+        for (Employee e : employees) {
+            double income      = e.getIncome();
+            double nassitEmp   = complianceManager.calculateEmployeeNASSIT(e.getBasicSalary());
+            double taxable     = income - nassitEmp;
+            double paye        = complianceManager.calculatePAYETax(taxable);
+            double net         = income - nassitEmp - paye;
 
-        if (income <= 600) {
-            payeTax = 0; // Nil tax
-        } else if (income <= 1200) {
-            payeTax = 0.15 * (income - 600); // 15% tax for the next Le 600
-        } else if (income <= 1800) {
-            payeTax = 0.15 * 600 + 0.20 * (income - 1200); // 15% tax for the first Le 600, 20% tax for the next Le 600
-        } else if (income <= 2400) {
-            payeTax = 0.15 * 600 + 0.20 * 600 + 0.30 * (income - 1800); // 15% tax for the first Le 600, 20% tax for the next Le 600, 30% tax for the next Le 600
-        } else {
-            payeTax = 0.15 * 600 + 0.20 * 600 + 0.30 * 600 + 0.35 * (income - 2400); // 15% tax for the first Le 600, 20% tax for the next Le 600, 30% tax for the next Le 600, 35% tax for the rest
+            sb.append(String.format(
+                    "%-14s %-20s %16.2f %16.2f %16.2f %16.2f%n",
+                    e.getEmployeeId(), e.getName(), income, paye, nassitEmp, net
+            ));
         }
 
-        return payeTax;
+        sb.append(divider).append("\n");
+        sb.append(String.format("Total PAYE liability: SLE %,.2f%n", totalTax));
+
+        String report = sb.toString();
+        System.out.print(report);
+        return report;
     }
 
-
-    private double calculateNASSIT(double income) {
-        // Calculate NASSIT contribution (5% of income) plus employer's contribution (10% of income)
-        double employeeContribution = 0.05 * income;
-        double employerContribution = 0.10 * income;
-        return employeeContribution + employerContribution;
+    /**
+     * Convenience method: calculates the total PAYE across all employees
+     * and generates the report in one call.
+     *
+     * @return formatted report string
+     */
+    public String generateTaxReport() {
+        double totalTax = 0.0;
+        for (Employee e : employees) {
+            double nassit  = complianceManager.calculateEmployeeNASSIT(e.getBasicSalary());
+            double taxable = e.getIncome() - nassit;
+            totalTax      += complianceManager.calculatePAYETax(taxable);
+        }
+        return generateTaxReport(totalTax);
     }
 }
