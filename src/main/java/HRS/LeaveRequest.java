@@ -9,7 +9,7 @@ public class LeaveRequest {
     private Date endDate;
     private LeaveRequestStatus status;
 
-    public LeaveRequest(int id, String employeeId, Date startDate, Date endDate) {
+    public LeaveRequest(String id, String employeeId, Date startDate, Date endDate) {
         this.id = id;
         this.employeeId = employeeId;
         this.startDate = startDate;
