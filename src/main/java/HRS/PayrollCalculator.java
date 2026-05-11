@@ -2,57 +2,76 @@ package HRS;
 
 import java.util.List;
 
+/**
+ * Calculates payroll for individual employees and totals across a payroll run.
+ * PAYE and NASSIT logic is delegated to ComplianceManager.
+ */
 public class PayrollCalculator {
-    private double taxRate;
+
+    private final ComplianceManager complianceManager;
 
     public PayrollCalculator() {
-        this.taxRate = taxRate;
+        this.complianceManager = new ComplianceManager();
     }
 
+    /**
+     * Calculates a full payroll record for one employee.
+     * Deductions are:
+     *   1. NASSIT employee contribution (5% of basic salary)
+     *   2. PAYE on (basic + allowances + bonus - NASSIT)
+     *
+     * @param employee the employee to calculate payroll for
+     * @return a Payroll record with all components populated
+     */
     public Payroll calculatePayroll(Employee employee) {
-        double basicSalary = employee.getBasicSalary();
-        double transportAllowance = employee.getTransportAllowance();
-        double telephoneSubsidy = employee.getTelephoneSubsidy();
-        double utilityAllowance = employee.getUtilityAllowance();
-        double entertainment = employee.getEntertainment();
-        double domesticHelpAllowance = employee.getDomesticHelpAllowance();
-        double lunchAllowance = employee.getLunchAllowance();
+        double basicSalary      = employee.getBasicSalary();
+        double totalAllowances  = employee.getTotalAllowances();
+        double grossIncome      = basicSalary + totalAllowances + employee.getBonus();
 
-        double totalAllowance = transportAllowance + telephoneSubsidy + utilityAllowance +
-                entertainment + domesticHelpAllowance + lunchAllowance;
+        double nassit           = complianceManager.calculateEmployeeNASSIT(basicSalary);
+        double taxableIncome    = grossIncome - nassit;
+        double paye             = complianceManager.calculatePAYETax(taxableIncome);
 
-        double totalDeduction = calculateTotalDeductions(basicSalary, totalAllowance);
+        double totalDeductions  = nassit + paye;
+        double netSalary        = grossIncome - totalDeductions;
 
-        double netSalary = basicSalary + totalAllowance - totalDeduction;
-
-        return new Payroll(employee.getEmployeeId(), basicSalary, totalAllowance, totalDeduction, netSalary);
+        return new Payroll(employee.getEmployeeId(), basicSalary, totalAllowances, totalDeductions, netSalary);
     }
 
-    private double calculateTotalDeductions(double basicSalary, double totalAllowance) {
-        double nassit = 0.05 * basicSalary;
-        double taxableIncome = basicSalary + totalAllowance - nassit;
-
-        double payeTax = 0;
-        if (taxableIncome > 0) {
-            if (taxableIncome <= 600) {
-                payeTax = 0;
-            } else if (taxableIncome <= 1200) {
-                payeTax = 0.15 * (taxableIncome - 600);
-            } else if (taxableIncome <= 1800) {
-                payeTax = 0.15 * 500 + 0.20 * (taxableIncome - 1200);
-            } else if (taxableIncome <= 2400) {
-                payeTax = 0.15 * 500 + 0.20 * 500 + 0.30 * (taxableIncome - 1800);
-            } else {
-                payeTax = 0.15 * 600 + 0.20 * 600 + 0.30 * 600 + 0.35 * (taxableIncome - 2400);
-            }
+    /**
+     * Sums the net payroll cost across all employees.
+     * Returns 0.0 for a null or empty list rather than throwing.
+     *
+     * @param employees list of employees in the payroll run
+     * @return total net pay in SLE
+     */
+    public double calculateTotalPayroll(List<Employee> employees) {
+        if (employees == null || employees.isEmpty()) {
+            return 0.0;
         }
-
-        return nassit + payeTax;
+        double total = 0.0;
+        for (Employee e : employees) {
+            total += calculatePayroll(e).getNetSalary();
+        }
+        return total;
     }
 
-    public double calculateTotalPayroll(List<Employee> allEmployees) {
-        return 0;
+    /**
+     * Sums total gross payroll cost to the employer, including the
+     * employer NASSIT contribution (10% of each employee's basic salary).
+     *
+     * @param employees list of employees in the payroll run
+     * @return total employer cost in SLE
+     */
+    public double calculateTotalEmployerCost(List<Employee> employees) {
+        if (employees == null || employees.isEmpty()) {
+            return 0.0;
+        }
+        double total = 0.0;
+        for (Employee e : employees) {
+            total += e.getIncome()
+                    + complianceManager.calculateEmployerNASSIT(e.getBasicSalary());
+        }
+        return total;
     }
 }
-
-
