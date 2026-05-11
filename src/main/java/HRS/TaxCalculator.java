@@ -2,33 +2,48 @@ package HRS;
 
 import java.util.List;
 
+/**
+ * Calculates income tax for individual employees and across a payroll run.
+ * All tax logic is delegated to ComplianceManager — this class must not
+ * duplicate bracket or rate definitions.
+ */
 public class TaxCalculator {
-    private double[] taxBrackets;
-    private double[] taxRates;
+
+    private final ComplianceManager complianceManager;
 
     public TaxCalculator() {
-        this.taxBrackets = taxBrackets;
-        this.taxRates = taxRates;
+        this.complianceManager = new ComplianceManager();
     }
 
+    /**
+     * Calculates PAYE on a given taxable income.
+     * Taxable income should already have the NASSIT deduction removed.
+     *
+     * @param taxableIncome monthly taxable income in SLE
+     * @return PAYE liability in SLE
+     */
     public double calculateIncomeTax(double taxableIncome) {
-        double incomeTax = 0;
-
-        for (int i = 0; i < taxBrackets.length; i++) {
-            if (taxableIncome <= taxBrackets[i]) {
-                incomeTax += taxableIncome * taxRates[i];
-                break;
-            } else {
-                incomeTax += taxBrackets[i] * taxRates[i];
-                taxableIncome -= taxBrackets[i];
-            }
-        }
-
-        return incomeTax;
+        return complianceManager.calculatePAYETax(taxableIncome);
     }
 
-    public double calculateTotalTax(List<Employee> allEmployees) {
-        return 0;
+    /**
+     * Sums PAYE liabilities across all employees in a list.
+     * Each employee's taxable income is derived as:
+     *   gross income - employee NASSIT contribution
+     *
+     * @param employees list of employees to include in the calculation
+     * @return total PAYE liability across all employees in SLE
+     */
+    public double calculateTotalTax(List<Employee> employees) {
+        if (employees == null || employees.isEmpty()) {
+            return 0.0;
+        }
+        double total = 0.0;
+        for (Employee e : employees) {
+            double nassit        = complianceManager.calculateEmployeeNASSIT(e.getBasicSalary());
+            double taxableIncome = e.getIncome() - nassit;
+            total               += complianceManager.calculatePAYETax(taxableIncome);
+        }
+        return total;
     }
 }
-
